@@ -1,0 +1,131 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Books Library</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script defer src="/static/js/script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ECF0F1;
+        }
+        header {
+            background-color: #F5F5F5;
+            color: #2C3E50;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+        }
+        .search-container {
+            text-align: center;
+            margin: 20px;
+        }
+        .search-container input {
+            padding: 10px;
+            width: 50%;
+            font-size: 16px;
+        }
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .book-card {
+            width: 200px;
+            height: 300px;
+            perspective: 1000px;
+        }
+        .book-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+        }
+        .book-card:hover .book-inner {
+            transform: rotateY(180deg);
+        }
+        .book-front, .book-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .book-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .book-back {
+            background: #1ABC9C;
+            color: #fff;
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 15px;
+        }
+        .book-back button {
+            background: #ff5722;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Books Library</h1>
+    </header>
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Search for books...">
+    </div>
+    <main>
+        <div class="book-list" id="book-list">
+            <!-- Books will be dynamically inserted here -->
+        </div>
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const books = [
+                { name: "Book One", image: "https://tiimg.tistatic.com/fp/1/006/230/the-illustrated-mahabharatham-book-670.jpg", pdf_link: "https://ia803400.us.archive.org/7/items/the-complete-mahabharata/The%20Complete%20Mahabharata%20.pdf" },
+                { name: "Book Two", image: "https://www.loyalbooks.com/image/detail/Bhagavad-Gita.jpg", pdf_link: "book2.pdf" }
+            ];
+            const bookList = document.getElementById("book-list");
+            books.forEach(book => {
+                const bookCard = document.createElement("div");
+                bookCard.classList.add("book-card");
+                bookCard.innerHTML = `
+                    <div class="book-inner">
+                        <div class="book-front">
+                            <img src="${book.image}" alt="${book.name}">
+                        </div>
+                        <div class="book-back">
+                            <h3>${book.name}</h3>
+                            <button onclick="openPDF('${book.pdf_link}')">Read</button>
+                        </div>
+                    </div>
+                `;
+                bookList.appendChild(bookCard);
+            });
+        });
+        function openPDF(pdf) {
+            window.location.href = `pdf_viewer1.html?file=${pdf}`;
+        }
+    </script>
+</body>
+</html>

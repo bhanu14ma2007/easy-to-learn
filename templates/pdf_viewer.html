@@ -1,0 +1,63 @@
+<!-- view_pdf.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Read PDF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.css">
+    <style>
+        #flipbook {
+            width: 80%;
+            height: 90vh;
+            margin: auto;
+        }
+        .page {
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <h1>Reading: {{ filename }}</h1>
+    <div id="flipbook"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
+    <script>
+        const filename = "{{ filename }}";
+        const url = `/uploads/${filename}`;
+        const flipbook = document.getElementById('flipbook');
+
+        // Load PDF using PDF.js
+        pdfjsLib.getDocument(url).promise.then((pdf) => {
+            for (let i = 1; i <= pdf.numPages; i++) {
+                pdf.getPage(i).then((page) => {
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'page';
+                    flipbook.appendChild(canvas);
+
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    const context = canvas.getContext('2d');
+                    const renderTask = page.render({ canvasContext: context, viewport: viewport });
+
+                    renderTask.promise.then(() => {
+                        // After rendering all pages, apply Turn.js
+                        if (i === pdf.numPages) {
+                            $(flipbook).turn({
+                                width: 800,
+                                height: 600,
+                                autoCenter: true
+                            });
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

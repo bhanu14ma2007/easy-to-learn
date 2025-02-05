@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Viewer</title>
+    <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; background-color: #2b2b2b; color: white; }
+        #pdf-container { width: 80%; margin: auto; }
+        canvas { border: 1px solid white; background: white; display: block; margin: auto; }
+        .controls { margin-top: 10px; display: flex; justify-content: center; gap: 10px; }
+        button { padding: 10px; cursor: pointer; background: #444; color: white; border: none; }
+        button:hover { background: #666; }
+    </style>
+</head>
+<body>
+    <h1>PDF Viewer</h1>
+    <div id="pdf-container">
+        <canvas id="pdf-render"></canvas>
+    </div>
+    <div class="controls">
+        <button onclick="prevPage()">Previous</button>
+        <span>Page: <span id="page-num"></span> / <span id="page-count"></span></span>
+        <button onclick="nextPage()">Next</button>
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+    </div>
+    
+    <script>
+        let url = '/static/sample.pdf';
+        let pdfDoc = null, pageNum = 1, pageIsRendering = false, pageNumIsPending = null;
+        let scale = 1.5;
+        const canvas = document.querySelector('#pdf-render'), ctx = canvas.getContext('2d');
+        
+        const renderPage = num => {
+            pageIsRendering = true;
+            pdfDoc.getPage(num).then(page => {
+                const viewport = page.getViewport({ scale });
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                
+                const renderCtx = { canvasContext: ctx, viewport };
+                page.render(renderCtx).promise.then(() => {
+                    pageIsRendering = false;
+                    if (pageNumIsPending !== null) {
+                        renderPage(pageNumIsPending);
+                        pageNumIsPending = null;
+                    }
+                });
+                document.querySelector('#page-num').textContent = num;
+            });
+        };
+        
+        const queueRenderPage = num => {
+            if (pageIsRendering) {
+                pageNumIsPending = num;
+            } else {
+                renderPage(num);
+            }
+        };
+        
+        const prevPage = () => {
+            if (pageNum <= 1) return;
+            pageNum--;
+            queueRenderPage(pageNum);
+        };
+        
+        const nextPage = () => {
+            if (pageNum >= pdfDoc.numPages) return;
+            pageNum++;
+            queueRenderPage(pageNum);
+        };
+        
+        const zoomIn = () => {
+            scale += 0.2;
+            renderPage(pageNum);
+        };
+        
+        const zoomOut = () => {
+            if (scale > 0.6) {
+                scale -= 0.2;
+                renderPage(pageNum);
+            }
+        };
+        
+        pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+            pdfDoc = pdfDoc_;
+            document.querySelector('#page-count').textContent = pdfDoc.numPages;
+            renderPage(pageNum);
+        });
+    </script>
+</body>
+</html>

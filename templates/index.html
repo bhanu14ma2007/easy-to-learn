@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Books.com</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script defer src="/static/js/script.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ECF0F1;
+        }
+
+        header {
+            background-color: #F5F5F5;
+            color: #2C3E50;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: #34495E;
+        }
+
+        .toolbar button {
+            background: #1ABC9C;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .book-card {
+            width: 200px;
+            height: 300px;
+            perspective: 1000px;
+        }
+
+        .book-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>EASY TO LEARN</h1>
+    </header>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <button onclick="translatePage()">Translate</button>
+        <button onclick="voiceTranslate()">Voice Translate</button>
+        <button onclick="toggleFullscreen()">Full Screen</button>
+        <button onclick="increaseFontSize()">A+</button>
+        <button onclick="decreaseFontSize()">A-</button>
+        <button onclick="toggleFontStyle()">Font Style</button>
+        <button onclick="savePage()">Save</button>
+        <button onclick="printPage()">Print</button>
+        <button onclick="enableDraw()">Draw</button>
+        <button onclick="downloadPDF()">Download PDF</button>
+    </div>
+
+    <main>
+        <h2>Featured Books</h2>
+        <div class="book-list" id="book-list">
+            <!-- Books dynamically added here -->
+        </div>
+    </main>
+
+    <script>
+        // Function to download the PDF
+        function downloadPDF() {
+            window.location.href = '/generate_pdf';
+        }
+
+        // Example functions (implement later)
+        function translatePage() { alert("Translation feature coming soon!"); }
+        function voiceTranslate() { alert("Voice Translate coming soon!"); }
+        function toggleFullscreen() { document.documentElement.requestFullscreen(); }
+        function increaseFontSize() { document.body.style.fontSize = "larger"; }
+        function decreaseFontSize() { document.body.style.fontSize = "smaller"; }
+        function toggleFontStyle() { document.body.style.fontFamily = "Courier New, monospace"; }
+        function savePage() { alert("Save feature coming soon!"); }
+        function printPage() { window.print(); }
+        function enableDraw() { alert("Draw feature coming soon!"); }
+
+        // Fetch book data from Python backend
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('/books')
+                .then(response => response.json())
+                .then(books => {
+                    const bookList = document.getElementById("book-list");
+                    books.forEach(book => {
+                        const bookCard = document.createElement("div");
+                        bookCard.classList.add("book-card");
+                        bookCard.innerHTML = `
+                            <div class="book-front">
+                                <img src="${book.image}" alt="${book.name}">
+                            </div>
+                            <div>
+                                <h3>${book.name}</h3>
+                                <p>${book.description}</p>
+                                <a href="${book.pdf_link}" download>Download PDF</a>
+                            </div>
+                        `;
+                        bookList.appendChild(bookCard);
+                    });
+                });
+        });
+    </script>
+</body>
+</html>

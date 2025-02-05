@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PDF Viewer</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script defer src="/static/js/pdf_tools.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #ECF0F1;
+        }
+
+        header {
+            background-color: #F5F5F5;
+            color: #2C3E50;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background: #ddd;
+        }
+
+        .toolbar button {
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            background: #3498db;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .pdf-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        iframe {
+            width: 80%;
+            height: 80vh;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PDF Viewer</h1>
+    </header>
+
+    <div class="toolbar">
+        <button onclick="translatePage()">Translate</button>
+        <button onclick="voiceTranslate()">Voice Translate</button>
+        <button onclick="toggleFullscreen()">Full Screen</button>
+        <button onclick="increaseFontSize()">A+</button>
+        <button onclick="decreaseFontSize()">A-</button>
+        <button onclick="toggleFontStyle()">Font Style</button>
+        <button onclick="savePage()">Save</button>
+        <button onclick="printPage()">Print</button>
+        <button onclick="enableDraw()">Draw</button>
+    </div>
+
+    <div class="pdf-container">
+        <iframe id="pdf-frame" src="https://ia803400.us.archive.org/7/items/the-complete-mahabharata/The%20Complete%20Mahabharata%20.pdf"></iframe>
+    </div>
+
+    <script>
+        // Get the PDF file URL from query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const pdfUrl = urlParams.get('pdf');
+
+        // Set the PDF URL in the iframe
+        if (pdfUrl) {
+            document.getElementById("pdf-frame").src = pdfUrl;
+        } else {
+            alert("No PDF selected.");
+        }
+
+        function translatePage() { /* Implement translation feature here */ }
+        function voiceTranslate() { /* Implement voice translation here */ }
+        function toggleFullscreen() { document.documentElement.requestFullscreen(); }
+        function increaseFontSize() { document.body.style.fontSize = "larger"; }
+        function decreaseFontSize() { document.body.style.fontSize = "smaller"; }
+        function toggleFontStyle() { document.body.style.fontFamily = (document.body.style.fontFamily === "Arial" ? "Georgia" : "Arial"); }
+        function savePage() { alert("Saving PDF..."); }
+        function printPage() { window.print(); }
+        function enableDraw() { alert("Drawing mode enabled!"); }
+    </script>
+</body>
+</html>
